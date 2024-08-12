@@ -10,15 +10,15 @@ public class apiManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)){
-            StartCoroutine(SendDataToGAS());
-        }
+        //if (Input.GetKeyDown(KeyCode.Space)){
+            //StartCoroutine(SendDataToGAS(prompt));
+        //}
     }
 
-    private IEnumerator SendDataToGAS()
+    public IEnumerator SendDataToGAS(string question)
     {
         WWWForm form = new WWWForm();
-        form.AddField("parameter", prompt);
+        form.AddField("parameter", question);
         UnityWebRequest www = UnityWebRequest.Post(gasURL, form);
 
         yield return www.SendWebRequest();
@@ -26,7 +26,7 @@ public class apiManager : MonoBehaviour
 
         if(www.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log("Prompt was "+prompt);
+            Debug.Log("Prompt was "+question);
             response = www.downloadHandler.text;
         }
         else
@@ -34,6 +34,48 @@ public class apiManager : MonoBehaviour
             response = "There was an error !";
         }
 
-        Debug.Log(response);
+        DM.aiAnswer = response;
     }
+
+    public IEnumerator setName()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("parameter", DM.aiQuestion);
+        UnityWebRequest www = UnityWebRequest.Post(gasURL, form);
+
+        yield return www.SendWebRequest();
+        string response = "";
+
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            response = www.downloadHandler.text;
+        }
+        else
+        {
+            response = "There was an error !";
+        }
+
+        DM.name = response;
+    }
+
+    public IEnumerator checkName()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("parameter", DM.aiQuestion);
+        UnityWebRequest www = UnityWebRequest.Post(gasURL, form);
+
+        yield return www.SendWebRequest();
+        string response = "";
+
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            response = www.downloadHandler.text;
+        }
+        else
+        {
+            response = "There was an error !";
+        }
+        DM.nameCheck = response;
+    }
+
 }
